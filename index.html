@@ -41,21 +41,39 @@
     .legend { display:flex; gap:8px; flex-wrap:wrap; }
     .legend .sw { width:18px; height:18px; border-radius:6px; display:inline-block; }
     footer { font-size:12px; color:var(--muted); margin-top:auto; }
-    @media (max-width:880px){
-      .app{ grid-template-columns: 1fr; }
-    }
-
-    /* Стиль для рекламного блока */
+    
+    /* Реклама для ПК */
     #yandex_rtb_R-A-17641784-1 {
-      width: 300px;  /* Ограничиваем ширину */
-      height: 250px; /* Ограничиваем высоту */
+      width: 300px;
+      height: 250px;
       position: fixed;
-      bottom: 20px;
+      top: 20px;
       right: 20px;
-      z-index: 1000;  /* Размещаем поверх всех элементов */
+      z-index: 1000;
       border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Тень для выделения */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Реклама для мобильных устройств */
+    @media (max-width: 768px) {
+      #yandex_rtb_R-A-17641784-1 {
+        width: 100%;
+        height: 80px; /* Уменьшаем высоту рекламы на мобильных устройствах */
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+
+    @media (max-width: 880px) {
+      .app {
+        grid-template-columns: 1fr;
+        padding: 12px;
+      }
     }
   </style>
   <!-- Yandex.RTB -->
