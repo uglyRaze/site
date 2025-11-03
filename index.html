@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Колесо фортуны</title>
+  <title>Колесо фортуны — рабочее</title>
   <style>
     :root{
       --bg: #0f1724;
@@ -43,6 +43,19 @@
     footer { font-size:12px; color:var(--muted); margin-top:auto; }
     @media (max-width:880px){
       .app{ grid-template-columns: 1fr; }
+    }
+
+    /* Стиль для рекламного блока */
+    #yandex_rtb_R-A-17641784-1 {
+      width: 300px;  /* Ограничиваем ширину */
+      height: 250px; /* Ограничиваем высоту */
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;  /* Размещаем поверх всех элементов */
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Тень для выделения */
     }
   </style>
   <!-- Yandex.RTB -->
