@@ -121,7 +121,21 @@
       margin-top:auto; 
     }
     
-    /* Боковая реклама для ПК */
+    /* Левая реклама для ПК */
+    #yandex_rtb_R-A-17641784-3 {
+      width: 300px;
+      height: 600px;
+      position: fixed;
+      top: 50%;
+      left: 20px;
+      transform: translateY(-50%);
+      z-index: 1000;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Правая реклама для ПК */
     #yandex_rtb_R-A-17641784-1 {
       width: 300px;
       height: 600px;
@@ -162,8 +176,9 @@
         padding: 12px;
       }
       
-      /* Скрываем боковую рекламу на мобильных */
-      #yandex_rtb_R-A-17641784-1 {
+      /* Скрываем боковые рекламы на мобильных */
+      #yandex_rtb_R-A-17641784-1,
+      #yandex_rtb_R-A-17641784-3 {
         display: none;
       }
       
@@ -285,6 +300,9 @@
     </div>
   </div>
 
+  <!-- Yandex.RTB R-A-17641784-3 -->
+  <div id="yandex_rtb_R-A-17641784-3"></div>
+  
   <!-- Yandex.RTB R-A-17641784-1 -->
   <div id="yandex_rtb_R-A-17641784-1"></div>
   
@@ -293,6 +311,11 @@
 
   <script>
   window.yaContextCb.push(() => {
+      Ya.Context.AdvManager.render({
+          "blockId": "R-A-17641784-3",
+          "renderTo": "yandex_rtb_R-A-17641784-3"
+      });
+      
       Ya.Context.AdvManager.render({
           "blockId": "R-A-17641784-1",
           "renderTo": "yandex_rtb_R-A-17641784-1"
