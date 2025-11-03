@@ -163,6 +163,7 @@
         padding: 12px;
       }
       
+      /* ИСПРАВЛЕННОЕ РАСПОЛОЖЕНИЕ РЕКЛАМЫ ДЛЯ МОБИЛЬНЫХ */
       #yandex_rtb_R-A-17641784-1,
       #yandex_rtb_R-A-17641784-2,
       #yandex_rtb_R-A-17641784-3 {
@@ -174,23 +175,22 @@
         box-shadow: none;
       }
 
-      #yandex_rtb_R-A-17641784-1 {
-        top: 0;
-        left: 0;
-      }
-
+      /* Скрываем все рекламные блоки кроме одного внизу */
+      #yandex_rtb_R-A-17641784-1,
       #yandex_rtb_R-A-17641784-2 {
-        top: 80px;
-        left: 0;
+        display: none;
       }
 
+      /* ТОЛЬКО ОДИН рекламный блок внизу */
       #yandex_rtb_R-A-17641784-3 {
+        display: block;
         bottom: 0;
         left: 0;
       }
       
+      /* Отступы для контента - оставляем отступ сверху для удобства */
       body {
-        padding-top: 160px; /* Отступ для верхней рекламы */
+        padding-top: 20px; /* Отступ сверху для удобства использования */
         padding-bottom: 80px; /* Отступ для нижней рекламы */
         align-items: flex-start;
       }
@@ -222,15 +222,11 @@
       }
       
       textarea {
-        font-size: 14px; /* Увеличиваем шрифт для удобства на мобильных */
-      }
-      
-      #yandex_rtb_R-A-17641784-2 {
-        top: 80px;
+        font-size: 14px;
       }
       
       body {
-        padding-top: 160px;
+        padding-top: 15px;
         padding-bottom: 80px;
       }
     }
@@ -238,7 +234,7 @@
     /* Ландшафтная ориентация на мобильных */
     @media (max-height: 500px) and (orientation: landscape) {
       body {
-        padding-top: 80px;
+        padding-top: 15px;
         padding-bottom: 80px;
       }
       
