@@ -19,9 +19,8 @@
       color:#e6eef8; 
       display:flex; 
       align-items:center; 
-      justify-content:center; 
-      padding: 12px;
-      box-sizing: border-box;
+      justify-content:center;
+      overflow-x: hidden;
     }
     .app {
       width: min(920px, 96vw);
@@ -33,13 +32,7 @@
       grid-template-columns: 1fr 320px; 
       gap:16px; 
       align-items:center;
-    }
-
-    .wheel-container {
-      position: relative;
-      width: 100%;
-      max-width: 500px;
-      margin: 0 auto;
+      margin: 10px;
     }
 
     canvas { 
@@ -48,6 +41,7 @@
       display:block; 
       border-radius:12px; 
       background:transparent; 
+      max-width: 100%;
     }
 
     .controls {
@@ -68,19 +62,19 @@
       background:linear-gradient(180deg,var(--accent), #ffb84d); 
       color:#081022;
       box-shadow:0 6px 20px rgba(255,169,35,0.15);
-      transition: all 0.2s ease;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
     .btn:hover {
       transform: translateY(-2px);
-      box-shadow:0 8px 25px rgba(255,169,35,0.25);
+      box-shadow: 0 8px 25px rgba(255,169,35,0.25);
+    }
+    .btn:active {
+      transform: translateY(0);
     }
     .btn.secondary {
       background:transparent; 
       color:var(--muted); 
       border:1px solid rgba(255,255,255,0.04);
-    }
-    .btn.secondary:hover {
-      background:rgba(255,255,255,0.05);
     }
     .seed, .spin-info { font-size:13px; color:var(--muted);}
     label { font-size:13px; color:var(--muted); margin-bottom:6px; display:block; }
@@ -156,63 +150,19 @@
       transform: translateX(-50%);
     }
 
-    /* Адаптивность для планшетов */
+    /* Мобильная адаптация */
     @media (max-width: 880px) {
       .app {
         grid-template-columns: 1fr;
         padding: 12px;
-        gap: 20px;
-      }
-      
-      .wheel-container {
-        max-width: 400px;
+        margin: 5px;
+        width: calc(100% - 10px);
       }
       
       .controls {
         padding: 12px;
       }
-    }
-
-    /* Адаптивность для мобильных устройств */
-    @media (max-width: 768px) {
-      body {
-        padding: 8px;
-        align-items: flex-start;
-        min-height: 100vh;
-        height: auto;
-      }
       
-      .app {
-        width: 100%;
-        padding: 12px;
-        grid-template-columns: 1fr;
-        gap: 16px;
-        margin-top: 20px;
-        margin-bottom: 100px; /* Добавляем отступ для рекламы */
-      }
-      
-      .wheel-container {
-        max-width: 100%;
-      }
-      
-      canvas {
-        max-height: 60vh;
-      }
-      
-      .controls {
-        padding: 10px;
-      }
-      
-      .btn {
-        padding: 14px 16px;
-        font-size: 14px;
-      }
-      
-      .list {
-        max-height: 20vh;
-      }
-      
-      /* Реклама для мобильных устройств */
       #yandex_rtb_R-A-17641784-1,
       #yandex_rtb_R-A-17641784-2,
       #yandex_rtb_R-A-17641784-3 {
@@ -230,36 +180,79 @@
       }
 
       #yandex_rtb_R-A-17641784-2 {
-        bottom: 0;
+        top: 80px;
         left: 0;
       }
 
       #yandex_rtb_R-A-17641784-3 {
-        display: none; /* Скрываем третью рекламу на мобильных */
+        bottom: 0;
+        left: 0;
+      }
+      
+      body {
+        padding-top: 160px; /* Отступ для верхней рекламы */
+        padding-bottom: 80px; /* Отступ для нижней рекламы */
+        align-items: flex-start;
+      }
+      
+      canvas {
+        max-height: 50vh;
+      }
+      
+      .list {
+        max-height: 20vh;
       }
     }
     
-    /* Адаптивность для очень маленьких экранов */
+    /* Адаптация для очень маленьких экранов */
     @media (max-width: 480px) {
       .app {
         padding: 8px;
+        gap: 12px;
       }
       
       .controls {
-        padding: 8px;
+        padding: 10px;
+        gap: 10px;
       }
       
       .btn {
-        padding: 12px 14px;
-        font-size: 13px;
+        padding: 10px 12px;
+        font-size: 14px;
       }
       
       textarea {
-        font-size: 12px;
+        font-size: 14px; /* Увеличиваем шрифт для удобства на мобильных */
       }
       
-      footer {
-        font-size: 11px;
+      #yandex_rtb_R-A-17641784-2 {
+        top: 80px;
+      }
+      
+      body {
+        padding-top: 160px;
+        padding-bottom: 80px;
+      }
+    }
+    
+    /* Ландшафтная ориентация на мобильных */
+    @media (max-height: 500px) and (orientation: landscape) {
+      body {
+        padding-top: 80px;
+        padding-bottom: 80px;
+      }
+      
+      .app {
+        grid-template-columns: 1fr 1fr;
+        align-items: flex-start;
+      }
+      
+      canvas {
+        max-height: 60vh;
+      }
+      
+      .list {
+        max-height: 15vh;
       }
     }
   </style>
@@ -271,7 +264,7 @@
 </head>
 <body>
   <div class="app" role="application" aria-label="Колесо фортуны">
-    <div class="wheel-container">
+    <div style="position:relative;">
       <canvas id="wheel"></canvas>
       <div id="pointer" style="position:absolute; left:50%; transform:translateX(-50%) rotate(0deg); top:6px; width:0; height:0; border-left:18px solid transparent; border-right:18px solid transparent; border-top:26px solid #ffefae; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.45));"></div>
     </div>
@@ -345,15 +338,11 @@
       const speedInput = document.getElementById('speed');
 
       function resizeCanvas() {
-        const container = canvas.parentElement;
-        const containerWidth = container.clientWidth;
-        const containerHeight = containerWidth; // Делаем квадрат
+        const rect = canvas.getBoundingClientRect();
         const dpr = Math.max(1, window.devicePixelRatio || 1);
-        
-        canvas.width = Math.floor(containerWidth * dpr);
-        canvas.height = Math.floor(containerHeight * dpr);
-        canvas.style.width = containerWidth + 'px';
-        canvas.style.height = containerHeight + 'px';
+        canvas.width = Math.floor(rect.width * dpr);
+        canvas.height = Math.floor(rect.width * dpr);
+        canvas.style.height = rect.width + 'px';
         ctx.setTransform(dpr,0,0,dpr,0,0);
       }
 
