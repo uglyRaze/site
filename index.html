@@ -129,6 +129,27 @@
     .help-link a:hover {
       text-decoration: underline;
     }
+
+    /* Футер */
+    .footer {
+      margin-top: 30px;
+      padding: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(255,255,255,0.02);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+      line-height: 1.5;
+    }
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
     
     /* Левая реклама для ПК */
     #yandex_rtb_R-A-17641784-3 {
@@ -180,7 +201,7 @@
         width: calc(100% - 10px);
       }
       
-      .controls, .trade-section {
+      .controls, .trade-section, .footer {
         padding: 12px;
       }
       
@@ -205,8 +226,13 @@
       /* Отступы для контента */
       body {
         padding-top: 20px;
-        padding-bottom: 80px;
+        padding-bottom: 100px; /* Увеличил отступ для футера */
         align-items: flex-start;
+      }
+      
+      .footer {
+        margin-top: 20px;
+        margin-bottom: 20px;
       }
       
       canvas {
@@ -221,7 +247,7 @@
         gap: 12px;
       }
       
-      .controls, .trade-section {
+      .controls, .trade-section, .footer {
         padding: 10px;
         gap: 10px;
       }
@@ -237,7 +263,12 @@
       
       body {
         padding-top: 15px;
-        padding-bottom: 80px;
+        padding-bottom: 100px;
+      }
+      
+      .footer {
+        font-size: 11px;
+        margin-top: 15px;
       }
     }
   </style>
@@ -270,6 +301,16 @@
         <strong>Ваша трейд-ссылка:</strong><br>
         <a id="tradeLink" href="#" target="_blank"></a>
       </div>
+    </div>
+
+    <!-- Футер с информацией -->
+    <div class="footer">
+      <strong>Колесо Фортуны</strong><br>
+      Испытайте удачу и получите шанс выиграть призы!<br>
+      Для получения выигрыша необходимо сохранить вашу трейд-ссылку Steam.<br>
+      <span style="font-size: 11px; opacity: 0.7;">
+        © 2024 Колесо Фортуны. Все права защищены.
+      </span>
     </div>
   </div>
 
