@@ -121,38 +121,18 @@
       margin-top:auto; 
     }
     
-    /* Реклама для ПК */
-    #yandex_rtb_R-A-17641784-1,
-    #yandex_rtb_R-A-17641784-2,
-    #yandex_rtb_R-A-17641784-3,
-    #yandex_rtb_R-A-17641784-4 {
-      width: 300px;
-      height: 250px;
+    /* Рекламный блок для ПК */
+    #yandex_rtb_R-A-17641784-2 {
+      width: 728px;
+      height: 90px;
       position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 1000;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    }
-
-    #yandex_rtb_R-A-17641784-1 {
-      top: 20px;
-      left: 20px;
-    }
-
-    #yandex_rtb_R-A-17641784-2 {
-      top: 20px;
-      right: 20px;
-    }
-
-    #yandex_rtb_R-A-17641784-3 {
-      bottom: 20px;
-      left: 20px;
-    }
-
-    #yandex_rtb_R-A-17641784-4 {
-      bottom: 20px;
-      right: 20px;
     }
 
     /* Мобильная адаптация */
@@ -168,37 +148,22 @@
         padding: 12px;
       }
       
-      /* ИСПРАВЛЕННОЕ РАСПОЛОЖЕНИЕ РЕКЛАМЫ ДЛЯ МОБИЛЬНЫХ */
-      #yandex_rtb_R-A-17641784-1,
-      #yandex_rtb_R-A-17641784-2,
-      #yandex_rtb_R-A-17641784-3,
-      #yandex_rtb_R-A-17641784-4 {
+      /* Адаптивная реклама для мобильных */
+      #yandex_rtb_R-A-17641784-2 {
         width: 100%;
         height: 80px;
         position: fixed;
-        z-index: 1000;
+        bottom: 0;
+        left: 0;
+        transform: none;
         border-radius: 0;
         box-shadow: none;
       }
-
-      /* Скрываем все рекламные блоки кроме одного внизу */
-      #yandex_rtb_R-A-17641784-1,
-      #yandex_rtb_R-A-17641784-2,
-      #yandex_rtb_R-A-17641784-3 {
-        display: none;
-      }
-
-      /* ТОЛЬКО ОДИН рекламный блок внизу */
-      #yandex_rtb_R-A-17641784-4 {
-        display: block;
-        bottom: 0;
-        left: 0;
-      }
       
-      /* Отступы для контента - оставляем отступ сверху для удобства */
+      /* Отступы для контента */
       body {
-        padding-top: 20px; /* Отступ сверху для удобства использования */
-        padding-bottom: 80px; /* Отступ для нижней рекламы */
+        padding-top: 20px;
+        padding-bottom: 80px;
         align-items: flex-start;
       }
       
@@ -260,9 +225,7 @@
     }
   </style>
   <!-- Yandex.RTB -->
-  <script>
-    window.yaContextCb = window.yaContextCb || [];
-  </script>
+  <script>window.yaContextCb=window.yaContextCb||[]</script>
   <script src="https://yandex.ru/ads/system/context.js" async></script>
 </head>
 <body>
@@ -303,34 +266,15 @@
     </div>
   </div>
 
-  <!-- Yandex.RTB R-A-17641784-1 -->
-  <div id="yandex_rtb_R-A-17641784-1"></div>
+  <!-- Yandex.RTB R-A-17641784-2 -->
   <div id="yandex_rtb_R-A-17641784-2"></div>
-  <div id="yandex_rtb_R-A-17641784-3"></div>
-  <div id="yandex_rtb_R-A-17641784-4"></div>
-
   <script>
-    window.yaContextCb.push(() => {
+  window.yaContextCb.push(() => {
       Ya.Context.AdvManager.render({
-        "blockId": "R-A-17641784-1",
-        "renderTo": "yandex_rtb_R-A-17641784-1"
-      });
-
-      Ya.Context.AdvManager.render({
-        "blockId": "R-A-17641784-2",
-        "renderTo": "yandex_rtb_R-A-17641784-2"
-      });
-
-      Ya.Context.AdvManager.render({
-        "blockId": "R-A-17641784-3",
-        "renderTo": "yandex_rtb_R-A-17641784-3"
-      });
-
-      Ya.Context.AdvManager.render({
-        "blockId": "R-A-17641784-4",
-        "renderTo": "yandex_rtb_R-A-17641784-4"
-      });
-    });
+          "blockId": "R-A-17641784-2",
+          "renderTo": "yandex_rtb_R-A-17641784-2"
+      })
+  })
   </script>
 
   <script>
