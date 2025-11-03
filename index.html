@@ -1,29 +1,310 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой первый сайт</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Колесо фортуны — рабочее</title>
+<style>
+  :root{
+    --bg: #0f1724;
+    --panel: #0b1220;
+    --accent: #ffd166;
+    --muted: #94a3b8;
+  }
+  html,body { height:100%; margin:0; font-family: Inter, Roboto, Arial, sans-serif; background:linear-gradient(180deg,#071027 0%, #07182a 100%); color:#e6eef8; display:flex; align-items:center; justify-content:center; }
+  .app {
+    width: min(920px, 96vw);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
+    border-radius:16px; padding:18px; box-shadow:0 6px 30px rgba(2,6,23,0.6);
+    display:grid; grid-template-columns: 1fr 320px; gap:16px; align-items:center;
+  }
+
+  canvas { width:100%; height:auto; display:block; border-radius:12px; background:transparent; }
+
+  .controls {
+    background: rgba(255,255,255,0.02); padding:14px; border-radius:12px; height:100%;
+    display:flex; flex-direction:column; gap:12px;
+  }
+  .btn {
+    padding:12px 16px; border-radius:10px; border:0; cursor:pointer; font-weight:600;
+    background:linear-gradient(180deg,var(--accent), #ffb84d); color:#081022;
+    box-shadow:0 6px 20px rgba(255,169,35,0.15);
+  }
+  .btn.secondary {
+    background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.04);
+  }
+  .seed, .spin-info { font-size:13px; color:var(--muted);}
+  label { font-size:13px; color:var(--muted); margin-bottom:6px; display:block; }
+  textarea,input { width:100%; font-size:13px; padding:8px; border-radius:8px; background:transparent; color:inherit; border:1px solid rgba(255,255,255,0.04) }
+  .list { display:flex; flex-direction:column; gap:8px; max-height:28vh; overflow:auto; padding-right:6px; }
+  .item { display:flex; gap:8px; align-items:center; padding:8px; border-radius:8px; background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); }
+  .legend { display:flex; gap:8px; flex-wrap:wrap; }
+  .legend .sw { width:18px; height:18px; border-radius:6px; display:inline-block; }
+  footer { font-size:12px; color:var(--muted); margin-top:auto; }
+  @media (max-width:880px){
+    .app{ grid-template-columns: 1fr; }
+  }
+</style>
 </head>
 <body>
-    <header>
-        <h1>Добро пожаловать на мой сайт!</h1>
-    </header>
+  <div class="app" role="application" aria-label="Колесо фортуны">
+    <div style="position:relative;">
+      <canvas id="wheel"></canvas>
+      <!-- Перевернутая стрелка -->
+      <div id="pointer" style="position:absolute; left:50%; transform:translateX(-50%) rotate(0deg); top:6px; width:0; height:0; border-left:18px solid transparent; border-right:18px solid transparent; border-top:26px solid #ffefae; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.45));"></div>
+    </div>
 
-    <main>
-        <section>
-            <h2>О сайте</h2>
-            <p>Это мой первый сайт, сделанный с использованием HTML и CSS. Здесь можно познакомиться с основами веб-разработки.</p>
-        </section>
+    <div class="controls" aria-hidden="false">
+      <div>
+        <label for="items">Элементы (по одному в строке)</label>
+        <textarea id="items" rows="7" placeholder="Например: Приз 1&#10;Приз 2&#10;Бонус" aria-label="Список элементов">10 очков
+Подарок
+Бонус
+Проигрыш
+Удвоение
+Подарок №2
+Маленький приз
+Большой приз</textarea>
+      </div>
 
-        <section>
-            <button onclick="alert('Спасибо за посещение!')">Нажми на меня</button>
-        </section>
-    </main>
+      <div style="display:flex; gap:8px;">
+        <button id="spinBtn" class="btn">Крутить</button>
+        <button id="resetBtn" class="btn secondary">Сброс</button>
+      </div>
 
-    <footer>
-        <p>&copy; 2025 Мой сайт. Все права защищены.</p>
-    </footer>
+      <div class="spin-info" id="result">Результат: —</div>
+
+      <div style="display:flex; gap:8px; align-items:center; justify-content:space-between;">
+        <div class="seed">Скорость: <input id="speed" type="range" min="2000" max="7000" step="250" value="4200"></div>
+        <div style="width:6px"></div>
+      </div>
+
+      <div class="legend" id="legend"></div>
+
+      <footer>Автоматическое уменьшение шрифта и поворот подписей по дуге предотвращают наложения.</footer>
+    </div>
+  </div>
+
+<script>
+(function(){
+  function randBetween(min,max){ return Math.random()*(max-min)+min; }
+
+  const canvas = document.getElementById('wheel');
+  const ctx = canvas.getContext('2d', {alpha:true});
+  const itemsTextarea = document.getElementById('items');
+  const spinBtn = document.getElementById('spinBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const resultEl = document.getElementById('result');
+  const legendEl = document.getElementById('legend');
+  const speedInput = document.getElementById('speed');
+
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    canvas.width = Math.floor(rect.width * dpr);
+    canvas.height = Math.floor(rect.width * dpr);
+    canvas.style.height = rect.width + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  // при ресайзе перерисовываем колесо
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      resizeCanvas();
+      drawWheel(-1);
+    }, 150);
+  });
+
+  let sectors = [];
+  let colors = [];
+  let rotation = 0;
+  let spinning = false;
+  let spinAnim = null;
+
+  function genColors(n){
+    const base = [
+      "#ff8b8b","#ffd166","#8bd3ff","#b6ff8b","#d5a6ff","#ffb3d1","#8bd6c9","#ffe89b"
+    ];
+    const out = [];
+    for(let i=0;i<n;i++){
+      out.push(base[i % base.length]);
+    }
+    return out;
+  }
+
+  function buildSectors(){
+    const raw = itemsTextarea.value.split('\n').map(s=>s.trim()).filter(Boolean);
+    if(raw.length === 0){
+      raw.push('Пусто');
+    }
+    sectors = raw.map((label, idx) => ({label, idx}));
+    colors = genColors(sectors.length);
+    drawLegend();
+  }
+
+  function drawLegend(){
+    legendEl.innerHTML = '';
+    sectors.forEach((s,i)=>{
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.innerHTML = '<span class="sw" style="background:'+colors[i]+'"></span><div style="flex:1">'+s.label+'</div>';
+      legendEl.appendChild(div);
+    });
+  }
+
+  function drawWheel(highlightIndex = -1){
+    const W = canvas.clientWidth;
+    const cx = W/2, cy = W/2;
+    const r = Math.min(cx, cy) - 8;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotation);
+
+    const n = sectors.length;
+    const full = Math.PI*2;
+    const angPer = full / n;
+
+    for(let i=0;i<n;i++){
+      const start = i*angPer;
+      const end = start + angPer;
+      ctx.beginPath();
+      ctx.moveTo(0,0);
+      ctx.arc(0,0,r,start,end,false);
+      ctx.closePath();
+      ctx.fillStyle = colors[i];
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      if(i === highlightIndex){
+        ctx.beginPath();
+        ctx.moveTo(0,0);
+        ctx.arc(0,0,r,start,end,false);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(255,255,255,0.06)';
+        ctx.fill();
+      }
+
+      const mid = start + angPer/2;
+      drawLabelOnSector(sectors[i].label, mid, angPer, r*0.68);
+    }
+
+    ctx.beginPath();
+    ctx.arc(0,0, Math.max(36, r*0.18), 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.fill();
+    ctx.restore();
+
+    ctx.beginPath();
+    ctx.arc(cx,cy,r+6,0,Math.PI*2);
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.stroke();
+  }
+
+  function drawLabelOnSector(text, angle, sectorAngle, radiusFromCenter){
+    ctx.save();
+    const x = Math.cos(angle) * radiusFromCenter;
+    const y = Math.sin(angle) * radiusFromCenter;
+    ctx.translate(x, y);
+    const tangentAngle = angle + Math.PI/2;
+    ctx.rotate(tangentAngle);
+
+    const arcLen = Math.abs(sectorAngle * radiusFromCenter) - 8;
+    let fontSize = Math.min(20, Math.max(12, Math.floor(arcLen / Math.max(6, text.length)) + 4));
+    ctx.font = `600 ${fontSize}px Inter, Arial`;
+    let metrics = ctx.measureText(text);
+    while(metrics.width > arcLen && fontSize > 9){
+      fontSize -= 1;
+      ctx.font = `600 ${fontSize}px Inter, Arial`;
+      metrics = ctx.measureText(text);
+    }
+    let renderText = text;
+    if(metrics.width > arcLen){
+      while(metrics.width > arcLen && renderText.length > 1){
+        renderText = renderText.slice(0, -1);
+        metrics = ctx.measureText(renderText + '…');
+      }
+      renderText = renderText + '…';
+    }
+
+    ctx.fillStyle = '#081022';
+    ctx.shadowColor = 'rgba(0,0,0,0.45)';
+    ctx.shadowBlur = 6;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(renderText, 0, 0);
+    ctx.restore();
+  }
+
+  function spinOnce(){
+    if(spinning) return;
+    spinning = true;
+    resultEl.textContent = 'Результат: кручение...';
+    const n = sectors.length;
+    const targetIndex = Math.floor(randBetween(0, n));
+    const full = Math.PI*2;
+    const angPer = full / n;
+    const midAngleOfTarget = (targetIndex * angPer) + angPer/2;
+    const minTurns = 3;
+    const extraTurns = Math.floor(randBetween(0,3));
+    const totalTurns = minTurns + extraTurns;
+    const rotationFinal = (-Math.PI/2 - midAngleOfTarget) + (totalTurns * full);
+    const duration = parseInt(speedInput.value, 10) || 4200;
+    const start = performance.now();
+    const startRotation = rotation;
+    const delta = rotationFinal - startRotation;
+    function easeOutCubic(t){ return 1 - Math.pow(1-t, 3); }
+
+    function frame(now){
+      const t = Math.min(1, (now - start)/duration);
+      const eased = easeOutCubic(t);
+      rotation = startRotation + delta * eased;
+      drawWheel(targetIndex);
+      if(t < 1){
+        spinAnim = requestAnimationFrame(frame);
+      } else {
+        spinning = false;
+        rotation = ((rotation % full) + full) % full;
+        drawWheel(targetIndex);
+        const chosen = sectors[targetIndex].label;
+        resultEl.textContent = 'Результат: ' + chosen;
+        setTimeout(()=> drawWheel(targetIndex), 80);
+      }
+    }
+    spinAnim = requestAnimationFrame(frame);
+  }
+
+  function reset(){
+    if(spinAnim) cancelAnimationFrame(spinAnim);
+    spinning = false;
+    rotation = 0;
+    resultEl.textContent = 'Результат: —';
+    buildSectors();
+    drawWheel(-1);
+  }
+
+  function init(){
+    resizeCanvas();
+    buildSectors();
+    drawWheel(-1);
+  }
+
+  spinBtn.addEventListener('click', ()=> { if(!spinning) spinOnce(); });
+  resetBtn.addEventListener('click', reset);
+  itemsTextarea.addEventListener('input', ()=> { if(!spinning){ buildSectors(); drawWheel(-1); } });
+  speedInput.addEventListener('input', ()=>{});
+
+  init();
+
+  const media = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+  media.onchange = () => { resizeCanvas(); drawWheel(-1); };
+
+})();
+</script>
 </body>
 </html>
