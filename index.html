@@ -43,29 +43,68 @@
     footer { font-size:12px; color:var(--muted); margin-top:auto; }
     
     /* Реклама для ПК */
-    #yandex_rtb_R-A-17641784-1 {
+    #yandex_rtb_R-A-17641784-1,
+    #yandex_rtb_R-A-17641784-2,
+    #yandex_rtb_R-A-17641784-3 {
       width: 300px;
       height: 250px;
       position: fixed;
-      top: 20px;
-      right: 20px;
       z-index: 1000;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
 
+    #yandex_rtb_R-A-17641784-1 {
+      top: 20px;
+      left: 20px;
+    }
+
+    #yandex_rtb_R-A-17641784-2 {
+      top: 20px;
+      right: 20px;
+    }
+
+    #yandex_rtb_R-A-17641784-3 {
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
     /* Реклама для мобильных устройств */
     @media (max-width: 768px) {
-      #yandex_rtb_R-A-17641784-1 {
+      #yandex_rtb_R-A-17641784-1,
+      #yandex_rtb_R-A-17641784-2,
+      #yandex_rtb_R-A-17641784-3 {
         width: 100%;
-        height: 80px; /* Уменьшаем высоту рекламы на мобильных устройствах */
+        height: 80px;
         position: fixed;
-        bottom: 0;
-        left: 0;
         z-index: 1000;
         border-radius: 0;
         box-shadow: none;
+      }
+
+      #yandex_rtb_R-A-17641784-1 {
+        bottom: 0;
+        left: 0;
+      }
+
+      #yandex_rtb_R-A-17641784-2 {
+        bottom: 0;
+        left: 0;
+      }
+
+      #yandex_rtb_R-A-17641784-3 {
+        bottom: 80px; /* Немного выше для предотвращения перекрытия */
+        left: 0;
+      }
+
+      .app {
+        padding-top: 60px; /* Убираем верхнюю часть колеса */
+      }
+
+      canvas {
+        max-height: 50vh; /* Ограничиваем высоту колеса на мобильных */
       }
     }
 
@@ -122,11 +161,24 @@
 
   <!-- Yandex.RTB R-A-17641784-1 -->
   <div id="yandex_rtb_R-A-17641784-1"></div>
+  <div id="yandex_rtb_R-A-17641784-2"></div>
+  <div id="yandex_rtb_R-A-17641784-3"></div>
+
   <script>
     window.yaContextCb.push(() => {
       Ya.Context.AdvManager.render({
         "blockId": "R-A-17641784-1",
         "renderTo": "yandex_rtb_R-A-17641784-1"
+      });
+
+      Ya.Context.AdvManager.render({
+        "blockId": "R-A-17641784-2",
+        "renderTo": "yandex_rtb_R-A-17641784-2"
+      });
+
+      Ya.Context.AdvManager.render({
+        "blockId": "R-A-17641784-3",
+        "renderTo": "yandex_rtb_R-A-17641784-3"
       });
     });
   </script>
